@@ -13,7 +13,7 @@ namespace WebAPI.Controllers
         [Route("")]
         public string GetMessage()
         {
-            return "hello, world";
+            return "hello world!";
         }
     }
 }
