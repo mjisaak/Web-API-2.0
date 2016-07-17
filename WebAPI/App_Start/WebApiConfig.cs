@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Net.Http.Headers;
 using System.Web.Http;
 
 namespace WebAPI
@@ -9,13 +7,13 @@ namespace WebAPI
     {
         public static void Register(HttpConfiguration config)
         {
-            // Web API configuration and services
-
-            // Web API routes
+            // enable attribute routing.
             config.MapHttpAttributeRoutes();
 
-            // convention based routing:
+            // change default media type text/html to return json instead of xml.
+            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
 
+            // convention based routing:
             //config.Routes.MapHttpRoute(
             //    name: "DefaultApi",
             //    routeTemplate: "api/{controller}/{id}",
