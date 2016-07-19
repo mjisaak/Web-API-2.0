@@ -17,6 +17,24 @@ public static void Register(HttpConfiguration config)
 Install NuGet Package using *Package Manager Console* :
 ```Install-Package Swashbuckle```
 
+### Enable xml documentation
+ Right click Web API project —> "Properties" -> "Build" tab. Check the "XML documentation file" checkbox and set the file path:
+ 
+![GitHub Logo](/Resources/xmldocumentation.png)
+
+Within the ```SwaggerConfig``` add the following method:
+```csharp
+protected static string GetXmlCommentsPath()
+{
+    return $@"{System.AppDomain.CurrentDomain.BaseDirectory}\bin\WebApi.XML";
+}
+```
+and provide the path to the swagger config:
+```csharp
+c.IncludeXmlComments(GetXmlCommentsPath());
+```
+[Source](http://bitoftech.net/2014/08/25/asp-net-web-api-documentation-using-swagger/)
+
 ## Common Gotchas:
 * At most one parameter is allowed to read from the message body thus multiple ```FromBody``` attributes are not allowed. So this will not work:
 ```public async Task<IHttpActionResult> AddMessageAsync([FromBody]Guid id, [FromBody]string message) { ... }```
