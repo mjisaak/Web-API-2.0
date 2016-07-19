@@ -122,3 +122,4 @@ The reason for this rule is that the request body might be stored in a non-buffe
 * [How do I get ASP.NET Web API to return JSON instead of XML](http://stackoverflow.com/questions/9847564/how-do-i-get-asp-net-web-api-to-return-json-instead-of-xml-using-chrome)
 * [HTTP Status Codes](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html)
 * [Swashbuckle 5.0](https://github.com/domaindrivendev/Swashbuckle)
+ *[Dependency Injection in ASP.NET Web API 2](http://www.asp.net/web-api/overview/advanced/dependency-injection)
