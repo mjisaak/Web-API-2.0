@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -17,8 +14,13 @@ namespace WebAPI.Controllers
     [RoutePrefix("api/default")]
     public class MessageController : ApiController
     {
-        private IMessageRepository mMessageRepository = new MessageRepository();
+        private readonly IMessageRepository mMessageRepository;
 
+        public MessageController(IMessageRepository aMessageRepository)
+        {
+            mMessageRepository = aMessageRepository;
+        }
+        
         /// <summary>
         /// Gets the message with the specified id.
         /// </summary>
