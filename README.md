@@ -13,6 +13,81 @@ public static void Register(HttpConfiguration config)
 	config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
 }
 ```
+### Add Unity as IoC Container
+Install NuGet Package using *Package Manager Console* :
+```Install-Package Unity```
+
+Create a class that derives from ```IDependencyResolver``` and implement it:
+```csharp
+public class UnityResolver : IDependencyResolver
+{
+	private readonly IUnityContainer mUnityContainer;
+
+	public UnityResolver(IUnityContainer aUnityContainer)
+	{
+		mUnityContainer = aUnityContainer;
+	}
+
+	#region Implementation of IDisposable
+
+	public void Dispose()
+	{
+		mUnityContainer.Dispose();
+	}
+
+	#endregion
+
+	#region Implementation of IDependencyScope
+
+	public object GetService(Type serviceType)
+	{
+		try
+		{
+			return mUnityContainer.Resolve(serviceType);
+		}
+		catch (ResolutionFailedException)
+		{
+			return null;
+		}
+	}
+
+	public IEnumerable<object> GetServices(Type serviceType)
+	{
+		try
+		{
+			return mUnityContainer.ResolveAll(serviceType);
+		}
+		catch (ResolutionFailedException)
+		{
+			return new List<object>();
+		}
+	}
+
+	public IDependencyScope BeginScope()
+	{
+		return new UnityResolver(mUnityContainer.CreateChildContainer());
+	}
+
+	#endregion
+}
+```
+Add a class to configure the new dependency resolver:
+```csharp
+public static class UnityConfig
+{
+	public static void Register(HttpConfiguration config)
+	{
+		var container = new UnityContainer();
+		container.RegisterType<IMessageRepository, MessageRepository>(new ContainerControlledLifetimeManager());
+		config.DependencyResolver = new UnityResolver(container);
+	}
+}
+```
+Finally, invoke the configuration within the Global.asax:
+```csharp
+GlobalConfiguration.Configure(UnityConfig.Register);
+```
+
 ### Enable Swagger
 Install NuGet Package using *Package Manager Console* :
 ```Install-Package Swashbuckle```
@@ -47,3 +122,4 @@ The reason for this rule is that the request body might be stored in a non-buffe
 * [How do I get ASP.NET Web API to return JSON instead of XML](http://stackoverflow.com/questions/9847564/how-do-i-get-asp-net-web-api-to-return-json-instead-of-xml-using-chrome)
 * [HTTP Status Codes](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html)
 * [Swashbuckle 5.0](https://github.com/domaindrivendev/Swashbuckle)
+* [Dependency Injection in ASP.NET Web API 2](http://www.asp.net/web-api/overview/advanced/dependency-injection)
