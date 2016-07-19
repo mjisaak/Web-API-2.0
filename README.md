@@ -17,6 +17,11 @@ public static void Register(HttpConfiguration config)
 Install NuGet Package using *Package Manager Console* :
 ```Install-Package Swashbuckle```
 
+## Common Gotchas:
+* At most one parameter is allowed to read from the message body thus multiple ```FromBody``` attributes are not allowed. So this will not work:
+```public async Task<IHttpActionResult> AddMessageAsync([FromBody]Guid id, [FromBody]string message) { ... }```
+The reason for this rule is that the request body might be stored in a non-buffered stream that can only be read once. [Source](http://www.asp.net/web-api/overview/formats-and-model-binding/parameter-binding-in-aspnet-web-api)
+
 ## Link list:
 * [Microsoft Best Practices Web API](https://azure.microsoft.com/en-us/documentation/articles/best-practices-api-implementation/)
 * [Attribute Routing in ASP.NET Web API 2](http://www.asp.net/web-api/overview/web-api-routing-and-actions/attribute-routing-in-web-api-2)
