@@ -33,6 +33,7 @@ namespace WebAPI.Controllers
         /// <response code="500">Internal Server Error</response>
         [ResponseType(typeof(string))]
         [Route("{id}", Name="GetMessage")]
+        [HttpGet]
         public async Task<IHttpActionResult> GetMessageAsync(Guid id)
         {
             try
@@ -53,6 +54,7 @@ namespace WebAPI.Controllers
         /// <response code="500">Internal Server Error</response>
         [ResponseType(typeof(IDictionary<Guid, string>))]
         [Route("", Name = "GetMessages")]
+        [HttpGet]
         public async Task<IHttpActionResult> GetMessages()
         {
             return Ok(mMessageRepository.GetAll());
@@ -102,11 +104,6 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<IHttpActionResult> AddMessageAsync([FromBody]MessageModel messageModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             try
             {
                 var id = messageModel.Id.Equals(Guid.Empty) ? Guid.NewGuid() : messageModel.Id;
@@ -127,6 +124,7 @@ namespace WebAPI.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         [Route("{id}")]
+        [HttpDelete]
         public IHttpActionResult DeleteMessage(Guid id)
         {
             if (!mMessageRepository.DeleteMessage(id))
