@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using WebAPI.Repositories;
 
 namespace WebAPI.Controllers
 {
@@ -16,7 +17,7 @@ namespace WebAPI.Controllers
     [RoutePrefix("api/default")]
     public class MessageController : ApiController
     {
-        private static readonly IDictionary<Guid, string> mMessages = new ConcurrentDictionary<Guid, string>();
+        private IMessageRepository mMessageRepository = new MessageRepository();
 
         /// <summary>
         /// Gets the message with the specified id.
@@ -31,14 +32,14 @@ namespace WebAPI.Controllers
         [Route("{id}", Name="GetMessage")]
         public async Task<IHttpActionResult> GetMessageAsync(Guid id)
         {
-            string retrievedMessage;
-            
-            if (!mMessages.TryGetValue(id, out retrievedMessage))
+            try
+            {
+                return Ok(mMessageRepository.GetMessageById(id));
+            }
+            catch (Exception)
             {
                 return NotFound();
             }
-
-            return Ok(retrievedMessage);
         }
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace WebAPI.Controllers
         [Route("", Name = "GetMessages")]
         public async Task<IHttpActionResult> GetMessages()
         {
-            return Ok(mMessages);
+            return Ok(mMessageRepository.GetAll());
         }
         
         /// <summary>
@@ -74,14 +75,15 @@ namespace WebAPI.Controllers
                 return BadRequest("Invalid id.");
             }
 
-            if (mMessages.ContainsKey(id))
+            try
+            {
+                mMessageRepository.InsertMesage(id, message);
+                return CreatedAtRoute("GetMessage", new { id = id }, message);
+            }
+            catch (Exception)
             {
                 return Conflict();
             }
-            
-            mMessages.Add(id, message);
-
-            return CreatedAtRoute("GetMessage", new {id = id}, message);
         }
 
         /// <summary>
@@ -94,7 +96,7 @@ namespace WebAPI.Controllers
         [Route("{id}")]
         public IHttpActionResult DeleteMessage(Guid id)
         {
-            if (!mMessages.Remove(id))
+            if (!mMessageRepository.DeleteMessage(id))
             {
                 return NotFound();
             }
