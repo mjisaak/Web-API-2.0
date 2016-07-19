@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Web.Http;
+using WebAPI.Library.Filter;
 
 namespace WebAPI
 {
@@ -12,6 +13,9 @@ namespace WebAPI
 
             // change default media type text/html to return json instead of xml.
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+
+            // add filter to validate the model.
+            config.Filters.Add(new ValidateModelAttribute());
 
             // convention based routing:
             //config.Routes.MapHttpRoute(

@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using WebAPI.Models;
 using WebAPI.Repositories;
 
 namespace WebAPI.Controllers
@@ -36,7 +37,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                return Ok(mMessageRepository.GetMessageById(id));
+                return await Task.FromResult(Ok(mMessageRepository.GetMessageById(id)));
             }
             catch (Exception)
             {
@@ -81,6 +82,36 @@ namespace WebAPI.Controllers
             {
                 mMessageRepository.InsertMesage(id, message);
                 return CreatedAtRoute("GetMessage", new { id = id }, message);
+            }
+            catch (Exception)
+            {
+                return Conflict();
+            }
+        }
+
+        /// <summary>
+        /// Adds a message using the specified MessageModel and returns the new resource location.
+        /// </summary>
+        /// <returns>The route of the added message.</returns>
+        /// <response code="201">Created</response>
+        /// <response code="400">Bad Request</response>
+        /// <response code="409">Conflict</response>
+        /// <response code="500">Internal Server Error</response>
+        [ResponseType(typeof(string))]
+        [Route("", Name = "AddMessageByModel")]
+        [HttpPost]
+        public async Task<IHttpActionResult> AddMessageAsync([FromBody]MessageModel messageModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var id = messageModel.Id.Equals(Guid.Empty) ? Guid.NewGuid() : messageModel.Id;
+                mMessageRepository.InsertMesage(id, messageModel.Message);
+                return CreatedAtRoute("GetMessage", new { id = id }, messageModel);
             }
             catch (Exception)
             {
