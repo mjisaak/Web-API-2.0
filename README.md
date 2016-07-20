@@ -173,7 +173,11 @@ Services that allow callers to specify key values on create SHOULD support UPSER
 Under UPSERT semantics, a PATCH call to a nonexistent resource is handled by the server as a "create," and a PATCH call to an existing resource is handled as an "update." To ensure that an update request is not treated as a create or vice-versa, the client MAY specify precondition HTTP headers in the request. The service MUST NOT treat a PATCH request as an insert if it contains an If-Match header and MUST NOT treat a PATCH request as an update if it contains an If-None-Match header with a value of "*".
 
 If a service does not support UPSERT, then a PATCH call against a resource that does not exist MUST result in an HTTP "409 Conflict" error.
-
+#### 7.10 RESPONSE FORMATS
+...
+JSON property names SHOULD be camelCased.
+...
+Services SHOULD provide JSON as the default encoding.
 
 ## Link list:
 * [Microsoft Best Practices Web API](https://azure.microsoft.com/en-us/documentation/articles/best-practices-api-implementation/)
