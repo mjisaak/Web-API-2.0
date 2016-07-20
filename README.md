@@ -115,6 +115,20 @@ c.IncludeXmlComments(GetXmlCommentsPath());
 ```public async Task<IHttpActionResult> AddMessageAsync([FromBody]Guid id, [FromBody]string message) { ... }```
 The reason for this rule is that the request body might be stored in a non-buffered stream that can only be read once. [Source](http://www.asp.net/web-api/overview/formats-and-model-binding/parameter-binding-in-aspnet-web-api)
 
+## Some snippets from [MICROSOFT REST API GUIDELINES](https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md)
+### 5.1 ERRORS
+Errors, or more specifically Service Errors, are defined as a client passing invalid data to the service and the service _correctly_ rejecting that data. Examples include invalid credentials, incorrect parameters, unknown version IDs, or similar. These are generally "4xx" HTTP error codes and are the result of a client passing incorrect or invalid data.
+
+Errors do _not_ contribute to overall API availability.
+
+### 5.2 FAULTS
+Faults, or more specifically Service Faults, are defined as the service failing to correctly return in response to a valid client request. These are generally "5xx" HTTP error codes.
+
+Faults _do_ contribute to the overall API availability.
+
+Calls that fail due to rate limiting or quota failures MUST NOT count as faults. Calls that fail as the result of a service fast-failing requests (often for its own protection) do count as faults.
+
+
 ## Link list:
 * [Microsoft Best Practices Web API](https://azure.microsoft.com/en-us/documentation/articles/best-practices-api-implementation/)
 * [Attribute Routing in ASP.NET Web API 2](http://www.asp.net/web-api/overview/web-api-routing-and-actions/attribute-routing-in-web-api-2)
