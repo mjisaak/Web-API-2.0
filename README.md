@@ -179,6 +179,9 @@ JSON property names SHOULD be camelCased.
 ...
 Services SHOULD provide JSON as the default encoding.
 
+### 8 CORS
+Services compliant with the Microsoft REST API Guidelines MUST support CORS (Cross Origin Resource Sharing). Services SHOULD support an allowed origin of CORS * and enforce authorization through valid OAuth tokens
+
 ## Link list:
 * [Microsoft Best Practices Web API](https://azure.microsoft.com/en-us/documentation/articles/best-practices-api-implementation/)
 * [Attribute Routing in ASP.NET Web API 2](http://www.asp.net/web-api/overview/web-api-routing-and-actions/attribute-routing-in-web-api-2)
