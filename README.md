@@ -127,6 +127,52 @@ Faults, or more specifically Service Faults, are defined as the service failing 
 Faults _do_ contribute to the overall API availability.
 
 Calls that fail due to rate limiting or quota failures MUST NOT count as faults. Calls that fail as the result of a service fast-failing requests (often for its own protection) do count as faults.
+### 7.4 SUPPORTED VERBS
+Operations MUST use the proper HTTP verbs whenever possible, and operation idempotency MUST be respected.
+
+Below is a list of verbs that Microsoft REST services SHOULD support. Not all resources will support all verbs, but all resources using the verbs below MUST conform to their usage.  
+
+Verb    | Description                                                                                                                | Is Idempotent
+------- | -------------------------------------------------------------------------------------------------------------------------- | -------------
+GET     | Return the current value of an object                                                                                      | True
+PUT     | Replace an object, or create a named object, when applicable                                                               | True
+DELETE  | Delete an object                                                                                                           | True
+POST    | Create a new object based on the data provided, or submit a command                                                        | False
+HEAD    | Return metadata of an object for a GET response. Resources that support the GET method MAY support the HEAD method as well | True
+PATCH   | Apply a partial update to an object                                                                                        | False
+OPTIONS | Get information about a request; see below for details.                                                                    | False
+
+<small>Table 1</small>
+
+#### 7.4.1 POST
+POST operations SHOULD support the Location response header to specify the location of any created object that was not explicitly named, via the Location header.
+
+As an example, imagine a service that allows creation of hosted servers, which will be named by the service:
+
+```http
+POST http://api.contoso.com/account1/servers
+```
+
+The response would be something like:
+
+```http
+201 Created
+Location: http://api.contoso.com/account1/servers/server321
+```
+
+Where "server321" is the service-allocated server name.
+
+Services MAY also return the full metadata for the created item in the response.
+
+#### 7.4.2 PATCH
+PATCH has been standardized by IETF as the verb to be used for updating an existing object incrementally (see [RFC 5789][rfc-5789]). Microsoft REST API Guidelines compliant APIs SHOULD support PATCH.  
+
+#### 7.4.3 CREATING RESOURCES VIA PATCH (UPSERT SEMANTICS)
+Services that allow callers to specify key values on create SHOULD support UPSERT semantics, and those that do MUST support creating resources using PATCH. Because PUT is defined as a complete replacement of the content, it is dangerous for clients to use PUT to modify data. Clients that do not understand (and hence ignore) properties on a resource are not likely to provide them on a PUT when trying to update a resource, hence such properties MAY be inadvertently removed. Services MAY optionally support PUT to update existing resources, but if they do they MUST use replacement semantics (that is, after the PUT, the resource's properties MUST match what was provided in the request, including deleting any server properties that were not provided).
+
+Under UPSERT semantics, a PATCH call to a nonexistent resource is handled by the server as a "create," and a PATCH call to an existing resource is handled as an "update." To ensure that an update request is not treated as a create or vice-versa, the client MAY specify precondition HTTP headers in the request. The service MUST NOT treat a PATCH request as an insert if it contains an If-Match header and MUST NOT treat a PATCH request as an update if it contains an If-None-Match header with a value of "*".
+
+If a service does not support UPSERT, then a PATCH call against a resource that does not exist MUST result in an HTTP "409 Conflict" error.
 
 
 ## Link list:
