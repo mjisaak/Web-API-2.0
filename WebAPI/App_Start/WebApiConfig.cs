@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Headers;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Net.Http.Headers;
 using System.Web.Http;
 using WebAPI.Library.Filter;
 
@@ -10,19 +12,23 @@ namespace WebAPI
         {
             // enable attribute routing.
             config.MapHttpAttributeRoutes();
-
-            // change default media type text/html to return json instead of xml.
-            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
-
+            
             // add filter to validate the model.
             config.Filters.Add(new ValidateModelAttribute());
 
-            // convention based routing:
-            //config.Routes.MapHttpRoute(
-            //    name: "DefaultApi",
-            //    routeTemplate: "api/{controller}/{id}",
-            //    defaults: new { id = RouteParameter.Optional }
-            //);
+            ConfigureJsonFormatter(config);                        
+        }
+
+        /// <summary>
+        /// Sets JSON as the default response for text/html and configures the formatter to use camel case ContractResolver
+        /// and indented formatting.
+        /// </summary>
+        private static void ConfigureJsonFormatter(HttpConfiguration config)
+        {
+            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+            config.Formatters.JsonFormatter.UseDataContractJsonSerializer = false;
+            config.Formatters.JsonFormatter.SerializerSettings.Formatting = Formatting.Indented;
+            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
         }
     }
 }
