@@ -144,6 +144,9 @@ OPTIONS | Get information about a request; see below for details.               
 
 <small>Table 1</small>
 
+
+According to the HTTP spec, a PUT request requires the client to send the entire updated entity, not just the deltas. To support partial updates, use HTTP PATCH.
+
 #### 7.4.1 POST
 POST operations SHOULD support the Location response header to specify the location of any created object that was not explicitly named, via the Location header.
 
