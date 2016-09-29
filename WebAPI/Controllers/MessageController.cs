@@ -32,7 +32,7 @@ namespace WebAPI.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         [ResponseType(typeof(string))]
-        [Route("{id}", Name="GetMessage")]
+        [Route("{id:guid}", Name="GetMessage")]
         [HttpGet]
         public async Task<IHttpActionResult> GetMessageAsync(Guid id)
         {
@@ -71,7 +71,7 @@ namespace WebAPI.Controllers
         /// <response code="409">Conflict</response>
         /// <response code="500">Internal Server Error</response>
         [ResponseType(typeof(string))]
-        [Route("{id:guid}/{message}", Name = "AddMessage")]
+        [Route("{id:guid}/{message:string}", Name = "AddMessage")]
         [HttpPost]
         public async Task<IHttpActionResult> AddMessageAsync(Guid id, string message)
         {
@@ -123,7 +123,7 @@ namespace WebAPI.Controllers
         /// <response code="204">No Content</response>
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
-        [Route("{id}")]
+        [Route("{id:guid}")]
         [HttpDelete]
         public IHttpActionResult DeleteMessage(Guid id)
         {
